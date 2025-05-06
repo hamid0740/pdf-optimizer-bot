@@ -1,18 +1,23 @@
 from dotenv import load_dotenv
 load_dotenv()
 import os
-
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+import requests
 
 # bot_pdf_optimizer.py
 
 import os
 import subprocess
 from pathlib import Path
-from telegram import Update, ChatAction
+from telegram import Update
+from telegram.constants import ChatAction
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Replace with your bot's token
+BOT_TOKEN = "7440716887:AAFMYL_-GFWJLaCp-86iEo-VjchTAH1zFOw"  # Replace with your bot's token
+
+def upload_to_transfersh(file_path):
+    with open(file_path, 'rb') as f:
+        response = requests.put(f"https://transfer.sh/{os.path.basename(file_path)}", data=f)
+        return response.text.strip()
 
 async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -41,8 +46,8 @@ async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         subprocess.run(gs_command, check=True)
 
-        await message.edit_text("✅ Compression complete. Uploading optimized PDF...")
-        await update.message.reply_document(document=open(output_path, "rb"), filename="compressed.pdf")
+        link = upload_to_transfersh(output_path)
+        await update.message.reply_text(f"✅ File compressed. Download here:\n{link}")
 
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {str(e)}")
