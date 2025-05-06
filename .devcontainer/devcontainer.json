@@ -1,0 +1,15 @@
+{
+  "name": "PDF Optimizer Bot",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": ["ms-python.python"]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "postCreateCommand": "./start.sh"
+}
